@@ -6,11 +6,11 @@ import signal
 import sys
 import tkinter as tk
 
-# Variable pour indiquer si le programme doit continuer à tourner
-running = True
-auto_click_enabled = False  # Variable pour activer/désactiver l'autoclicker
 
-# Capturer le signal d'interruption (CTRL + C)
+running = True
+auto_click_enabled = False 
+
+
 def signal_handler(sig, frame):
     global running
     print("Arrêt du programme")
@@ -18,7 +18,7 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-# Effectue un clic à la position actuelle de la souris
+
 def click_mouse(button="left", bblock=False):
     if bblock:
         if button == 'left':
@@ -35,7 +35,6 @@ def click_mouse(button="left", bblock=False):
         win32api.SendMessage(hwnd, msg_down, 0, win32api.MAKELONG(x, y))
         win32api.SendMessage(hwnd, msg_up, 0, win32api.MAKELONG(x, y))
 
-# Ajoute un effet "shake" à la souris
 def shake_effect(shake_intensity=5):
     if shake_intensity == 0:
         return
@@ -44,14 +43,13 @@ def shake_effect(shake_intensity=5):
     y_shake = random.randint(-shake_intensity, shake_intensity)
     win32api.SetCursorPos((x + x_shake, y + y_shake))
 
-# Calcule l'intervalle entre les clics selon un CPS donné
 def interval_calculator(cps, randomize_factor=0):
     if cps <= 0:
         return 0.1  # Intervalle par défaut si CPS est 0 ou invalide
     rand_cps = cps + random.randint(-randomize_factor, randomize_factor)
     return 1.0 / max(rand_cps, 1)
 
-# Fonction pour surveiller l'état du clic et effectuer des clics automatiques
+
 def auto_click_when_pressed(cps=10, randomize=2, shake=5, bblock=False):
     global running, auto_click_enabled
     while running:
@@ -67,7 +65,7 @@ def auto_click_when_pressed(cps=10, randomize=2, shake=5, bblock=False):
         else:
             time.sleep(0.1)
 
-# Thread pour exécuter l'autoclic
+
 def start_click_thread(cps=10, randomize=2, shake=5, bblock=False):
     thread = threading.Thread(target=auto_click_when_pressed, args=(cps, randomize, shake, bblock))
     thread.start()
@@ -83,7 +81,7 @@ def apply_settings():
     cps = int(cps_entry.get())
     randomize = int(randomize_entry.get())
     shake = int(shake_entry.get())
-    toggle_auto_click()  # Démarre ou arrête l'autoclick
+    toggle_auto_click() 
     if auto_click_enabled:
         start_click_thread(cps=cps, randomize=randomize, shake=shake)
 
@@ -96,11 +94,11 @@ def monitor_keyboard():
                 time.sleep(0.1)
         time.sleep(0.1)
 
-# Interface graphique avec tkinter
+
 root = tk.Tk()
 root.title("Auto Clicker")
 
-# Labels et champs pour CPS, Randomize et Shake
+
 tk.Label(root, text="CPS:").grid(row=0, column=0, padx=10, pady=5)
 cps_entry = tk.Entry(root)
 cps_entry.grid(row=0, column=1, padx=10, pady=5)
@@ -116,7 +114,7 @@ shake_entry = tk.Entry(root)
 shake_entry.grid(row=2, column=1, padx=10, pady=5)
 shake_entry.insert(0, "5")
 
-# Bouton pour appliquer les paramètres et démarrer/arrêter
+
 toggle_button = tk.Button(root, text="Start", command=apply_settings)
 toggle_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
@@ -132,7 +130,7 @@ root.protocol("WM_DELETE_WINDOW", on_close)
 keyboard_thread = threading.Thread(target=monitor_keyboard)
 keyboard_thread.start()
 
-# Lancer l'interface tkinter
+
 root.mainloop()
 
 running = False
